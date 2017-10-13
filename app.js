@@ -1,29 +1,18 @@
-const http = require('http');
+const express = require('express');
+const app = express();
 
-http.createServer((request, response) => {
-  const { headers, method, url } = request;
-  let body = [];
-  request.on('error', (err) => {
-    console.error(err);
-  }).on('data', (chunk) => {
-    body.push(chunk);
-  }).on('end', () => {
-    body = Buffer.concat(body).toString();
+const chefs = require('./controllers/chefs');
+app.use('/chefs', chefs);
 
-    response.on('error', (err) => {
-      console.err(err);
-    });
+app.get('/', (req, res) => {
+  res.send('GET to homepage');
+});
 
-    response.statusCode = 200;
-    response.setHeader('Content-Type', 'application/json');
-    // or response.writeHead(200, {'Content-Type', 'application/json'});
+app.post('/', (req, res) => {
+  res.send('POST to homepage');
+});
 
-    const responseBody = { headers, method, url, body };
 
-    response.write(JSON.stringify(responseBody));
-    response.end();
-
-  });
-}).listen(3000, () => {
-  console.log('Server running on 3000...');
+app.listen(3000, () => {
+  console.log('Server running at 3000...');
 });
