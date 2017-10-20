@@ -4,17 +4,24 @@ const mongoose = require('mongoose');
 
 const app = express();
 
-mongoose.connect('mongodb://localhost/test', {useMongoClient: true});
-
-app.engine('handlebars', exphbs({defaultLayout: 'main'}));
+app.engine('handlebars', exphbs({
+  layoutsDir: './views/layouts',
+  defaultLayout: 'main'
+}));
 app.set('view engine', 'handlebars');
+app.set('views', `${__dirname}/views/`);
 
-//const Chef = require('./models/chef');
+mongoose.connect('mongodb://localhost/myChefApp', {useMongoClient: true});
+mongoose.Promise = global.Promise;
+
+
+
+const Chef = require('./models/chef');
 const chefs = require('./controllers/chefs');
 app.use('/chefs', chefs);
 
-var Cat = mongoose.model('Cat', { name: String });
-var kitty = new Cat({ name: 'meow2' });
+//var Cat = mongoose.model('Cat', { name: String });
+/*var kitty = new Cat({ name: 'meow2' });
 kitty.save(function(err) {
   if(err) {
     console.log(err);
@@ -22,12 +29,17 @@ kitty.save(function(err) {
     console.log('meow');
   }
 })
+*/
 
 app.get('/', (req, res) => {
-  //res.render('home');
-  Cat.find({}, function(err, cats) {
-    res.send(cats);
+  Chef.find({}, function(err, chefs) {
+    if(err) console.log(err);
+    res.send(chefs);
   });
+  /*Chef.find({}, function(err, chefs) {
+    if(err) console.log(err);
+    res.render('chefs/list', {chefs:chefs});
+  });*/
 });
 
 app.post('/', (req, res) => {
